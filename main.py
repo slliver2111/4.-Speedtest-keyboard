@@ -3,7 +3,7 @@ import time
 import random
 
 THEME_COLOR = "#375362"
-NUMBER_WORDS_CONTEST = 3
+NUMBER_WORDS_CONTEST = 20
 
 
 def load_text_to_test():
@@ -23,18 +23,20 @@ def random_choice_words(list_of_words):
     return list_to_return
 
 
+# TODO Show in the end words and char per minute
+
 class SpeedTest:
     def __init__(self, contest_words):
         self.contest_words_list = contest_words
-        self.test_timer = time.time()
+        self.test_timer = None
         self.window = Tk()
 
         self.window.geometry("300x150")
         self.window.resizable(False, False)
-        self.window.title("App v.0.9")
+        self.window.title("Type Speed Test v.0.9")
 
         # label
-        self.welcome_label = Label(self.window, text="Type speed test")
+        self.welcome_label = Label(self.window, text="Welcome.")
         self.welcome_label.pack(fill='x', expand=True)
 
         # text area
@@ -43,16 +45,13 @@ class SpeedTest:
         self.text_area.pack(fill='x', expand=True)
 
         # entry to type
-        self.user_entry = Entry(self.window)
+        self.user_entry = Entry(self.window, state='disabled')
         self.user_entry.pack(fill='x', expand=True)
         self.user_entry.focus()
 
         # start button
         self.my_button = Button(text="Start test", command=self.start_timer)
         self.my_button.pack()
-
-        # mechanics
-        self.window.bind('<KeyPress>', self.check_word)
 
         self.window.mainloop()
 
@@ -75,7 +74,9 @@ class SpeedTest:
     def start_timer(self):
         if self.test_timer is None:
             self.test_timer = time.time()
-            #self.window.bind('<KeyPress>', self.check_word())
+            self.window.bind('<KeyPress>', self.check_word)
+            self.user_entry.config(state='normal')
+            self.welcome_label.config(text='Start typing!')
 
     def stop_timer(self):
         end_time = time.time()
