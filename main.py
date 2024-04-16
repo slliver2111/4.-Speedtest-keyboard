@@ -23,11 +23,12 @@ def random_choice_words(list_of_words):
     return list_to_return
 
 
-# TODO Show in the end words and char per minute
-
 class SpeedTest:
     def __init__(self, contest_words):
         self.contest_words_list = contest_words
+        self.words_count = len(contest_words)
+        self.chars_count = len("".join(contest_words))
+
         self.test_timer = None
         self.window = Tk()
 
@@ -69,14 +70,18 @@ class SpeedTest:
                 total = self.stop_timer()
                 self.text_area.delete(1.0, END)
                 self.user_entry.delete(0, END)
-                self.text_area.insert(1.0, f"End of test. Your time is {total:.2f} sec.")
+                self.welcome_label.config(text='End of test')
+                self.text_area.insert(1.0, f"Your time is {total:.1f} sec."
+                                           f" {(self.words_count / total * 60):.1f} words/min,"
+                                           f" {(self.chars_count / total * 60):.1f} chars/min,")
 
     def start_timer(self):
         if self.test_timer is None:
             self.test_timer = time.time()
             self.window.bind('<KeyPress>', self.check_word)
             self.user_entry.config(state='normal')
-            self.welcome_label.config(text='Start typing!')
+            self.my_button.config(state='disabled')
+            self.welcome_label.config(text='Start typing')
 
     def stop_timer(self):
         end_time = time.time()
