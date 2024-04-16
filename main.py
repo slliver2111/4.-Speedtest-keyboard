@@ -1,12 +1,3 @@
-# TODO 1. Error Handling in File Reading
-# Implement error handling when opening and reading the file to prevent the program from crashing if the file does not exist or is empty.
-#
-# TODO 2. Optimization in random_choice_words Function
-# The random_choice_words function currently uses a potentially inefficient method to choose random words due to the repeated popping of elements from the list. This can be optimized to be more efficient and safer, particularly regarding handling edge cases.
-#
-# TODO 3. Enhancement of GUI Appearance
-# Enhance the GUI appearance and usability by adjusting the layout, possibly using a grid system instead of pack for better control, adding margins, and improving widget alignments.
-#
 # TODO 4. Additional UI Features
 # Add more features like a reset button to restart the test without restarting the program, and display more detailed statistics or feedback on the user's typing patterns.
 #
@@ -29,19 +20,23 @@ NUMBER_WORDS_CONTEST = 20
 
 def load_text_to_test():
     # Open the text file in read mode
-    with open('source.txt', 'r') as file:
-        file_contents = file.read()
-
-    return file_contents.split(" ")
+    try:
+        with open('source.txt', 'r') as file:
+            file_contents = file.read()
+            if file_contents:
+                return file_contents.split(" ")
+            else:
+                print("File is empty.")
+                return []
+    except FileNotFoundError:
+        print("Source file is not present.")
+    return []
 
 
 def random_choice_words(list_of_words):
-    list_to_return = []
-    for _ in range(NUMBER_WORDS_CONTEST):
-        random_index = random.randint(0, len(list_of_words))
-        list_to_return.append(list_of_words.pop(random_index))
-
-    return list_to_return
+    if len(list_of_words) < NUMBER_WORDS_CONTEST:
+        return list_of_words
+    return random.sample(list_of_words, NUMBER_WORDS_CONTEST)
 
 
 class SpeedTest:
@@ -52,28 +47,30 @@ class SpeedTest:
 
         self.test_timer = None
         self.window = Tk()
+        self.window.config(padx=40, pady=40, bg=THEME_COLOR)
 
-        self.window.geometry("300x150")
-        self.window.resizable(False, False)
+        # self.window.geometry("600x600")
+        # self.window.resizable(False, False)
         self.window.title("Type Speed Test v.0.9")
 
         # label
-        self.welcome_label = Label(self.window, text="Welcome.")
-        self.welcome_label.pack(fill='x', expand=True)
+        self.welcome_label = Label(self.window, text="Welcome to type speed test.", bg=THEME_COLOR)
+        self.welcome_label.grid(row=0, column=1, padx=20, pady=20)
 
         # text area
-        self.text_area = Text(self.window, height=5, width=52)
+        self.text_area = Text(self.window, height=5, width=52, wrap=WORD)
         self.text_area.insert(1.0, " ".join(self.contest_words_list))
-        self.text_area.pack(fill='x', expand=True)
+        self.text_area.bind("<Key>", lambda e: "break")
+        self.text_area.grid(row=1, column=0, columnspan=3, padx=20, pady=20)
 
         # entry to type
         self.user_entry = Entry(self.window, state='disabled')
-        self.user_entry.pack(fill='x', expand=True)
+        self.user_entry.grid(row=2, column=0, columnspan=3, padx=20, pady=20)
         self.user_entry.focus()
 
         # start button
-        self.my_button = Button(text="Start test", command=self.start_timer)
-        self.my_button.pack()
+        self.my_button = Button(text="Start test", command=self.start_timer, padx=20, pady=20)
+        self.my_button.grid(row=3, column=1, padx=20, pady=20)
 
         self.window.mainloop()
 
@@ -92,8 +89,8 @@ class SpeedTest:
                 self.text_area.delete(1.0, END)
                 self.user_entry.delete(0, END)
                 self.welcome_label.config(text='End of test')
-                self.text_area.insert(1.0, f"Your time is {total:.1f} sec."
-                                           f" {(self.words_count / total * 60):.1f} words/min,"
+                self.text_area.insert(1.0, f"Your time is {total:.1f} sec.\n"
+                                           f" {(self.words_count / total * 60):.1f} words/min,\n"
                                            f" {(self.chars_count / total * 60):.1f} chars/min,")
 
     def start_timer(self):
@@ -103,6 +100,7 @@ class SpeedTest:
             self.user_entry.config(state='normal')
             self.my_button.config(state='disabled')
             self.welcome_label.config(text='Start typing')
+            self.user_entry.focus()
 
     def stop_timer(self):
         end_time = time.time()
@@ -111,9 +109,10 @@ class SpeedTest:
 
 def main():
     words_list_from_file = load_text_to_test()
-    contest_words_list = random_choice_words(words_list_from_file)
 
-    st = SpeedTest(contest_words_list)
+    if len(words_list_from_file):
+        contest_words_list = random_choice_words(words_list_from_file)
+        SpeedTest(contest_words_list)
 
 
 if __name__ == '__main__':
