@@ -1,3 +1,24 @@
+# TODO 1. Error Handling in File Reading
+# Implement error handling when opening and reading the file to prevent the program from crashing if the file does not exist or is empty.
+#
+# TODO 2. Optimization in random_choice_words Function
+# The random_choice_words function currently uses a potentially inefficient method to choose random words due to the repeated popping of elements from the list. This can be optimized to be more efficient and safer, particularly regarding handling edge cases.
+#
+# TODO 3. Enhancement of GUI Appearance
+# Enhance the GUI appearance and usability by adjusting the layout, possibly using a grid system instead of pack for better control, adding margins, and improving widget alignments.
+#
+# TODO 4. Additional UI Features
+# Add more features like a reset button to restart the test without restarting the program, and display more detailed statistics or feedback on the user's typing patterns.
+#
+# TODO 5. Improved End of Test Handling
+# Refine the handling at the end of the test, perhaps by disabling the input field and offering options to restart or quit.
+#
+# TODO 6. Accurate Word Boundaries in Input Checking
+# Modify the input checking logic to more accurately recognize word boundaries and to improve user experience by allowing more natural typing behavior.
+#
+# TODO 7. Refactoring and Code Structure
+# Refactor the code to better separate the concerns (e.g., separating GUI code from logic for test timing and word checking), making it easier to manage and extend.
+
 from tkinter import *
 import time
 import random
